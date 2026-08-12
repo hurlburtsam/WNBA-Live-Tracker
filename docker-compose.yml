@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: wnba_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localdevpassword
+      POSTGRES_DB: wnba_tracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - wnba_pg_data:/var/lib/postgresql/data
+
+volumes:
+  wnba_pg_data:
