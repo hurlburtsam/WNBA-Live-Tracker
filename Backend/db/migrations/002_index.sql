@@ -1,0 +1,14 @@
+CREATE INDEX IF NOT EXISTS idx_teams_external_id ON teams(external_id);
+CREATE INDEX IF NOT EXISTS idx_players_external_id ON players(external_id);
+CREATE INDEX IF NOT EXISTS idx_players_team_id ON players(team_id);
+CREATE INDEX IF NOT EXISTS idx_games_external_id ON games(external_id);
+CREATE INDEX IF NOT EXISTS idx_games_game_date ON games(game_date);
+CREATE INDEX IF NOT EXISTS idx_games_status_date ON games(status, game_date DESC);
+CREATE INDEX IF NOT EXISTS idx_games_home_team_id ON games(home_team_id);
+CREATE INDEX IF NOT EXISTS idx_games_away_team_id ON games(away_team_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_stats_game_id ON player_game_stats(game_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_stats_player_id ON plaer_game_stats(player_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_stats_team_id ON player_game_stats(team_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_stats_updated_at ON player_game_stats(updated_at);
+CREATE INDEX IF NOT EXISTS idx_player_career_stats_player_id ON player_career_stats(player_id);
+CREATE INDEX IF NOT EXISTS idx_player_career_stats_stat_type ON player_career_stats(stat_type);
