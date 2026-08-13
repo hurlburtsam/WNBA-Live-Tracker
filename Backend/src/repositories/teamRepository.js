@@ -32,3 +32,26 @@ export async function getTeambyExternalId(external_id){
 
     return result.rows[0];
 }
+
+export async function getAllTeams(){
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM teams`
+    )
+
+    return result.rows;
+}
+
+export async function getTeamById(id){
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM teams
+        WHERE id = $1
+        `,
+        [id]
+    )
+
+    return result.rows[0];
+}

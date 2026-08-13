@@ -44,3 +44,68 @@ export async function upsertGame({
 
     return result.rows[0];
 }
+
+export async function getGameByExternalId(external_id) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM games
+        WHERE external_id = $1
+        `,
+        [external_id]
+    )
+
+    return result.rows[0];
+}
+
+export async function getGamebyId(id) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM games
+        WHERE id = $1
+        `,
+        [id]
+    )
+
+    return result.rows[0];
+}
+
+export async function getLiveGames() {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM games
+        WHERE status = 'live'
+        `,
+    )
+
+    return result.rows;
+}
+
+export async function getGamesByStatus(status){
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM games
+        WHERE status = $1
+        `,
+        [status]
+    )
+
+    return result.rows;
+}
+
+export async function getRecentGames(limit = 10) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM games
+        ORDER BY game_date DESC
+        LIMIT $1
+        `,
+        [limit]
+    )
+
+    return result.rows;
+}

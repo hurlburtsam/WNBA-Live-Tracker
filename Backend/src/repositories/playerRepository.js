@@ -26,3 +26,42 @@ export async function upsertPlayer({
     
     return result.rows[0];
 }
+
+export async function getPlayerbyExternalId(external_id) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM players
+        WHERE external_id = $1
+        `,
+        [external_id]
+    )
+
+    return result.rows[0];
+}
+
+export async function getPlayerbyID(id) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM players
+        WHERE id = $1
+        `,
+        [id]
+    )
+
+    return result.rows[0];
+}
+
+export async function getPlayersByTeam(team_id){
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM players
+        WHERE team_id = $1
+        `,
+        [team_id]
+    )
+
+    return result.rows;
+}
