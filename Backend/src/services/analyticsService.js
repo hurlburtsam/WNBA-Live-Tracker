@@ -103,3 +103,14 @@ export async function getPlayerCareerAnalytics(player_id, stat_types = ['points'
         throw error;
     }
 }
+
+export async function getPlayerSeasonAverages(playerId, statTypes) {
+    const averages = await Promise.all(
+        statTypes.map(async (statType) => ({
+            stat_type: statType,
+            ...(await getPlayerSeasonAverage(playerId, statType)),
+        }))
+    );
+
+    return averages;
+}

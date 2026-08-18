@@ -6,7 +6,7 @@ export async function upsertCareerHigh(player_id, stat_type, game_value) {
     try {
         const query = `
             INSERT INTO player_career_stats(player_id, stat_type, career_high, last_updated)
-            VALUE ($1, $2, $3, NOW())
+            VALUES ($1, $2, $3, NOW())
             ON CONFLICT (player_id, stat_type)
             DO UPDATE SET
                 career_high = GREATEST(player_career_stats.career_high, $3),
@@ -32,7 +32,7 @@ export async function getPlayerCareerStats(player_id) {
         stat_type,
         career_high,
         season_avg,
-        lat_updated,
+        last_updated
         FROM player_career_stats
         WHERE player_id = $1
         ORDER BY stat_type
@@ -45,6 +45,21 @@ export async function getPlayerCareerStats(player_id) {
         throw error;
     }
 }
+
+export async function getCareerHighByStat(player_id, stat_type) {
+    const result = await pool.query(
+        `
+        SELECT *
+        FROM player_career_stats
+        WHERE player_id = $1 AND stat_type = $2
+        `,
+        [player_id, stat_type]
+    );
+
+    return result.rows[0] || null;
+}
+
+export const getPlayerSeasonAverage = getPlayerSeasonaverage;
 
 //Calculate season average for a player stat
 
@@ -59,13 +74,13 @@ export async function getPlayerSeasonaverage(player_id, stat_type) {
             turnovers: 'turnovers',
             fouls: 'personal_fouls',
             field_goal_percentage: 'CASE WHEN field_goals_attempted > 0 THEN (field_goals_made::float/field_goals_attempted * 100) ELSE 0 END',
-            three_point_percentage: 'CASE WHEN three_pointers_attemped> 0 THEN (three_pointers_made::float/three_pointers_attempted * 100) ELSE 0 END',
-            free_throw_percentage: 'CASE WHEN free_throws_attempted > 0 THHEN (free_throws_made::float/free_throws_attempted * 100) ELSE 0 END',
+            three_point_percentage: 'CASE WHEN three_pointers_attempted > 0 THEN (three_pointers_made::float/three_pointers_attempted * 100) ELSE 0 END',
+            free_throw_percentage: 'CASE WHEN free_throws_attempted > 0 THEN (free_throws_made::float/free_throws_attempted * 100) ELSE 0 END',
         };
 
         const statColumn = statColumnMap[statType];
         if(!statColumn){
-            throw new error(`Invalid stat type: ${statType}`);
+            throw new Error(`Invalid stat type: ${stat_type}`);
         }
 
         const query = `
@@ -152,34 +167,13 @@ export async function updatePlayerCareerStatsAfterGame(player_id, game_id) {
 
         const statUpdates = [];
 
-        if(gameStats.points) {
-            statUpdates.push(upsertCareerHigh(player_id, 'points', gameStats.points));
-        }
-        if(gameStats.rebounds_total) {
-            statUpdates.push(upsertCareerHigh(player_id, 'rebounds', gameStats.rebounds_total));
-        }
-        if(gameStats.assists) {
-            statUpdates.push(upsertCareerHigh(player_id, 'assists', gameStats.assists));
-        }
-        if(gameStats.steals) {
-            statUpdates.push(upsertCareerHigh(player_id, 'steals', gameStats.steals));
-        }
-        if(gameStats.blocks) {
-            statUpdates.push(upsertCareerHigh(player_id, 'blocks', gameStats.blocks));
-        }
-        if(gameStats.field_goals_attempted > 0) {
-            const fgPct = (gameStats.field_goals_made/gameStats.field_goals_attempted)
-            statUpdates.push(upsertCareerHigh(player_id, 'field_goal_percentage', fgPct))
-        }
-        if(gameStats.three_pointers_attempted > 0) {
-            const threePct = (gameStats.three_pointers_made/gameStats.three_pointers_attempted)
-            statUpdates.push(upsertCareerHigh(player_id, 'three_point_percentage', threePct))
-        }
-        if(gameStats.free_throws_attempted > 0) {
-            const ftPct = (gameStats.free_throws_made/gameStats.free_throws_attempted)
-            statUpdates.push(upsertCareerHigh(player_id, 'free_throw_percentage', ftPct))
-        }
-
+        statUpdates.push(upsertCareerHigh(player_id, 'points', gameStats.points ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'rebounds', gameStats.rebounds_total ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'assists', gameStats.assists ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'steals', gameStats.steals ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'blocks', gameStats.blocks ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'turnovers', gameStats.turnovers ?? 0));
+        statUpdates.push(upsertCareerHigh(player_id, 'fouls', gameStats.personal_fouls ?? 0));
         const results = await Promise.all(statUpdates);
         return results;
     } catch(error) {
@@ -203,7 +197,7 @@ export async function updateAllPlayerCareerStatsForGame(game_id) {
 
         let updatedCount = 0;
 
-        for(const player_id of PlayerIds) {
+        for(const player_id of playerIds) {
             await updatePlayerCareerStatsAfterGame(player_id, game_id);
             updatedCount++;
         }

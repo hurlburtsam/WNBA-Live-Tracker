@@ -1,7 +1,7 @@
 // api routes for analytics 
 
 import express from 'express';
-import * as analytcisService from '../services/analyticsService.js';
+import * as analyticsService from '../services/analyticsService.js';
 
 const router = express.Router();
 
@@ -76,13 +76,13 @@ router.get('/player/:id/season-averages', async (req,res) => {
 // GET /api/analytics/player/:id/career-high/:statType
 // Career high in a stat for a player
 
-router.get('/player/:id/career-high/stat_type', async (req, res) => {
+router.get('/player/:id/career-high/:stat_type', async (req, res) => {
     try {
         const player_id = parseInt(req.params.id);
         const stat_type = req.params.stat_type;
 
         if(isNaN(player_id)) {
-            return res.json({
+            return res.status(400).json({
                 success:false,
                 error: 'Invalid Player ID',
             });
@@ -113,7 +113,7 @@ router.get('/game/:id/on-pace', async(req,res) => {
         const game_id = parseInt(req.params.id);
 
         if(isNaN(game_id)) {
-            return status(400).json({
+            return res.status(400).json({
                 success: false,
                 error: 'Invalid Game ID',
             });
@@ -128,7 +128,7 @@ router.get('/game/:id/on-pace', async(req,res) => {
     } catch(error) {
         console.error('Error fetching on-pace players: ', error);
 
-        return status(500).json({
+        return res.status(500).json({
             success:false,
             error: 'Failed to fetch on-pace players',
             message: error.message,

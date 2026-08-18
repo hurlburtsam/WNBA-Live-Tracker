@@ -14,7 +14,7 @@ export async function getGameWithBoxScore(gameId) {
         const game = await gameRepository.getGamebyId(gameId);
 
         if(!game) {
-            throw new error (`Game ${gameId} not found`);
+            throw new Error(`Game ${gameId} not found`);
         }
 
         const boxScore = await playerGameStatsRepository.getBoxScorebyGameId(gameId);
@@ -58,7 +58,7 @@ export async function getGameStatLeaders(gameId) {
             throw new Error(`Game ${gameId} not found`);
         }
 
-        const homeTeamLeaders = await playerGameStatsRepository.getHomeTeamStatLeadersByGame(gameId, game.home_team_id);
+        const homeTeamLeaders = await playerGameStatsRepository.getStatLeadersHomeTeam(gameId, game.home_team_id);
         const awayTeamLeaders = await playerGameStatsRepository.getAwayTeamStatLeadersByGame(gameId, game.away_team_id);
         return {
             gameId: gameId,
@@ -93,7 +93,7 @@ export async function getGameTeamStats(gameId) {
 
         return {
             gameId: gameId,
-            hometeamStats: hometeamStats || null,
+            homeTeamStats: homeTeamStats || null,
             awayTeamStats: awayTeamStats || null,
         };
     } catch(error) {
@@ -111,7 +111,7 @@ export async function getGameTeamStats(gameId) {
 export async function getGameDetails(gameId) {
     try {
         const gameWithBoxScore = await getGameWithBoxScore(gameId);
-        const statLeaders = await GetGameStatLeaders(gameId);
+        const statLeaders = await getGameStatLeaders(gameId);
         const teamStats = await getGameTeamStats(gameId);
 
         return {
@@ -120,7 +120,7 @@ export async function getGameDetails(gameId) {
             teamStats,
         };
     } catch(error) {
-        console.error('Error getting omplete game details: ', error);
+        console.error('Error getting complete game details: ', error);
         throw error;
     }
 }

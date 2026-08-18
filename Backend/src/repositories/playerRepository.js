@@ -1,6 +1,6 @@
 // player repositry -> for player stats
 
-import pool from '../db/index/js';
+import pool from '../db/index.js';
 
 export async function upsertPlayer({
     external_id,

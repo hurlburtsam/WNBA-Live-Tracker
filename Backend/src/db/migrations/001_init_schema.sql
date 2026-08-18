@@ -14,13 +14,13 @@ CREATE TABLE players (
     full_name TEXT NOT NULL,
     team_id INTEGER REFERENCES teams(id),
     position TEXT,
-    jersey_numer INTEGER
+        jersey_number INTEGER
 );
 
 --games
 CREATE TABLE games (
     id SERIAL PRIMARY KEY,
-    external_id TEXT UNIQYE NOT NULL,
+    external_id TEXT UNIQUE NOT NULL,
     home_team_id INTEGER REFERENCES teams(id),
     away_team_id INTEGER REFERENCES teams(id),
     game_date TIMESTAMP NOT NULL,
@@ -36,12 +36,13 @@ CREATE TABLE player_game_stats (
     id SERIAL PRIMARY KEY,
     game_id INTEGER NOT NULL REFERENCES games(id),
     player_id INTEGER NOT NULL REFERENCES players(id),
+    team_id INTEGER NOT NULL REFERENCES teams(id),
     starter BOOLEAN DEFAULT false,
     minutes_played INTEGER,
     points INTEGER DEFAULT 0,
     rebounds_offensive INTEGER DEFAULT 0,
     rebounds_defensive INTEGER DEFAULT 0,
-    rebounds_total INTEGER DEFAULT rebounds_offensive + rebounds_defensive,
+        rebounds_total INTEGER DEFAULT 0,
     assists INTEGER DEFAULT 0,
     steals INTEGER DEFAULT 0,
     blocks INTEGER DEFAULT 0,

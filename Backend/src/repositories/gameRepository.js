@@ -1,6 +1,6 @@
 //game repository -> game stats
 
-import pooll from '../db/index.js';
+import pool from '../db/index.js';
 
 export async function upsertGame({
     external_id,
@@ -21,8 +21,8 @@ export async function upsertGame({
             away_team_id,
             game_date,
             status,
-            home_team_score,
-            away_team_score,
+            home_score,
+            away_score,
             period,
             clock
         )
@@ -33,13 +33,13 @@ export async function upsertGame({
             away_team_id = EXCLUDED.away_team_id,
             game_date = EXCLUDED.game_date,
             status = EXCLUDED.status,
-            home_team_score = EXCLUDED.home_team_score,
-            away_team_score = EXCLUDED.away_team_score,
+            home_score = EXCLUDED.home_score,
+            away_score = EXCLUDED.away_score,
             period = EXCLUDED.period,
             clock = EXCLUDED.clock
         RETURNING *
         `,
-        [external_id, home_team_id, away_team_id, game_date, home_team_score, away_team_score, period, clock]
+        [external_id, home_team_id, away_team_id, game_date, status, home_team_score, away_team_score, period, clock]
     );
 
     return result.rows[0];

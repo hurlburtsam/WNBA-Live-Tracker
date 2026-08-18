@@ -6,7 +6,7 @@ export async function upsertTeam({external_id, name, abbreviation, city}){
     const result = await pool.query(
         `
         INSERT INTO teams (external_id, name, abbreviation, city)
-        VALUES ($1, $,2, $3, $4)
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (external_id)
         DO UPDATE SET
             name = EXCLUDED.name,

@@ -72,7 +72,7 @@ export async function upsertPlayerGameStats({
                 three_pointers_attempted = EXCLUDED.three_pointers_attempted,
                 free_throws_made = EXCLUDED.free_throws_made,
                 free_throws_attempted = EXCLUDED.free_throws_attempted,
-                plus_minus = EXCLUDED.plus_minus
+                plus_minus = EXCLUDED.plus_minus,
                 updated_at = NOW()
             RETURNING *
             `,
@@ -181,7 +181,7 @@ export async function getStatLeadersHomeTeam(game_id, home_team_id){
                 player_id,
                 full_name,
                 points,
-                ROW_NUMBER() OVER (ORDER BY points DESC) asrn
+                ROW_NUMBER() OVER (ORDER BY points DESC) AS rn
             FROM player_totals
         ) ranked
          WHERE rn = 1

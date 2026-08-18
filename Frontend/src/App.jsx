@@ -1,10 +1,5 @@
-function App() {
-  return (
-    <div>
-      <h1>WNBA Live Score Tracker</h1>
-      <p>Coming soon.</p>
-    </div>
-  );
-}
+import LiveGamesPage from './routes/LiveGamesPage';
 
-export default App;
+export default function App() {
+  return <LiveGamesPage />;
+}
