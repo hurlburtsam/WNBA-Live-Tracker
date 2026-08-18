@@ -66,7 +66,7 @@ export async function getGameStatLeaders(gameId) {
             awayTeamLeaders: awayTeamLeaders || []
         };
     } catch(error) {
-        console.error('error getting game stat leaders: ', error);
+        console.error('Error getting game stat leaders: ', error);
         throw error;
     }
 }

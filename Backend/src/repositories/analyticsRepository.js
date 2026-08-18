@@ -130,7 +130,7 @@ export async function getPlayersOnPaceForCareerHigh(game_id) {
 
 //Upsert career stats after game
 
-export async function updatePlayerCareerStatsafterGame(player_id, game_id) {
+export async function updatePlayerCareerStatsAfterGame(player_id, game_id) {
     try {
         const gameStatsQuery = `
         SELECT
