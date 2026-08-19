@@ -61,9 +61,16 @@ export async function getGameByExternalId(external_id) {
 export async function getGamebyId(id) {
     const result = await pool.query(
         `
-        SELECT *
-        FROM games
-        WHERE id = $1
+        SELECT
+            g.*,
+            home.name AS home_team_name,
+            home.abbreviation AS home_team_abbreviation,
+            away.name AS away_team_name,
+            away.abbreviation AS away_team_abbreviation
+        FROM games g
+        JOIN teams home ON home.id = g.home_team_id
+        JOIN teams away ON away.id = g.away_team_id
+        WHERE g.id = $1
         `,
         [id]
     )
@@ -74,8 +81,15 @@ export async function getGamebyId(id) {
 export async function getLiveGames() {
     const result = await pool.query(
         `
-        SELECT *
-        FROM games
+        SELECT
+            g.*,
+            home.name AS home_team_name,
+            home.abbreviation AS home_team_abbreviation,
+            away.name AS away_team_name,
+            away.abbreviation AS away_team_abbreviation
+        FROM games g
+        JOIN teams home ON home.id = g.home_team_id
+        JOIN teams away ON away.id = g.away_team_id
         WHERE status = 'live'
         `,
     )

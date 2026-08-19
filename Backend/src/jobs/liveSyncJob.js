@@ -1,6 +1,7 @@
 // Backend/src/jobs/liveSyncJob.js
 
 import { syncFullGameData } from "../services/syncService.js";
+import * as gameRepository from "../repositories/gameRepository.js";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba";
 
@@ -64,13 +65,15 @@ export async function syncLiveGames(io) {
       }
     }
 
+    const liveGames = await gameRepository.getLiveGames();
+
     io.emit("games:live", {
       type: "games",
-      count: syncedGames.length,
-      data: syncedGames,
+      count: liveGames.length,
+      data: liveGames,
     });
 
-    return syncedGames;
+    return liveGames;
   } catch (error) {
     console.error("Error syncing live games:", error);
     throw error;

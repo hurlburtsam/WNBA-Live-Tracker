@@ -107,9 +107,15 @@ export async function upsertPlayerGameStats({
 export async function getBoxScorebyGameId(game_id) {
     const result = await pool.query(
         `
-        SELECT *
-        FROM player_game_stats
-        WHERE game_id = $1
+        SELECT
+            pgs.*,
+            p.full_name AS player_name,
+            p.jersey_number,
+            p.position,
+        FROM player_gam_stats pgs
+        JOIN players p ON p.id = pgs.player_id
+        WHERE pgs.game_id = $1
+        ORDER BY pgs.starter DESC, p.full_name ASC
         `,
         [game_id]
     )

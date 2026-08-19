@@ -10,7 +10,7 @@ export function useGameSocket(game_id) {
         socket.emit('joinGame', Number(game_id));
 
         const handleGameUpdate = (payload) => {
-            if(payload.game_id === Number(game_id)) {
+            if(payload.gameId === Number(game_id)) {
                 setGame((prev) => ({
                     ...prev,
                     ...payload.data,

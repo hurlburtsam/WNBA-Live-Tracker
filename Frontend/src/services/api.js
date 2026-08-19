@@ -14,3 +14,8 @@ export async function fetchGameLeaders(game_id) {
     const response = await fetch(`${API_BASE}/api/games/${game_id}/leaders`);
     return response.json();
 }
+
+export async function fetchGameDetails(game_id) {
+    const response = await fetch(`${API_BASE}/api/games/${game_id}/details`);
+    return response.json();
+}

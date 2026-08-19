@@ -26,37 +26,37 @@ router.get('/live', async (req,res) => {
     }
 });
 
-//Get /api/games/:id
-//Retrieves a single game with complete box score
+// Get /api/games/:id/details
+// Retrieves compehensive game details
 
-router.get('/:id', async(req, res) => {
+router.get('/:id/details', async (req, res) => {
     try {
         const gameId = parseInt(req.params.id);
 
         if(isNaN(gameId)) {
             return res.status(400).json({
-                success: false,
+                success:false,
                 error: 'Invalid game ID',
             });
         }
 
-        const game = await gameService.getGameWithBoxScore(gameId);
+        const details = await gameService.getGameDetails(gameId);
         res.json({
-            success: true,
-            data: game,
+            success:true,
+            data:details,
         });
     } catch(error) {
         if(error.message.includes('not found')) {
-            return res.status(404).jsonn({
-                success: false,
-                error: 'Game not found'
+            return res.status(404).json({
+                success:false,
+                error: 'Game not found',
             });
         }
 
-        console.error('Error fetching game: ', error);
+        console.error('Error fetching game details', error);
         res.status(500).json({
             success:false,
-            error: 'Failed to fetch game',
+            error: 'Failed to fetch game details',
             message: error.message,
         });
     }
@@ -129,37 +129,37 @@ router.get('/:id/team-stats', async(req, res) => {
   }
 });      
 
-// Get /api/games/:id/details
-// Retrieves compehensive game details
+//Get /api/games/:id
+//Retrieves a single game with complete box score
 
-router.get('/:id/details', async (req, res) => {
+router.get('/:id', async(req, res) => {
     try {
         const gameId = parseInt(req.params.id);
 
         if(isNaN(gameId)) {
             return res.status(400).json({
-                success:false,
+                success: false,
                 error: 'Invalid game ID',
             });
         }
 
-        const details = await gameService.getGameDetails(gameId);
+        const game = await gameService.getGameWithBoxScore(gameId);
         res.json({
-            success:true,
-            data:details,
+            success: true,
+            data: game,
         });
     } catch(error) {
         if(error.message.includes('not found')) {
             return res.status(404).json({
-                success:false,
-                error: 'Game not found',
+                success: false,
+                error: 'Game not found'
             });
         }
 
-        console.error('Error fetching game details', error);
+        console.error('Error fetching game: ', error);
         res.status(500).json({
             success:false,
-            error: 'Failed to fetch game details',
+            error: 'Failed to fetch game',
             message: error.message,
         });
     }
