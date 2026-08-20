@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getTeamLogo } from '../constants/teams.js';
 
 export default function LiveGameCard({ game }) {
     return (
@@ -15,14 +16,28 @@ export default function LiveGameCard({ game }) {
                 cursor: 'pointer',
             }}
         >
-            <div style = {{ display: 'flex', justifyContent: 'space-between'}}>
-                <span>{game.home_team_name || 'Home'}</span>
+            <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <span style={{display: 'flex', alignItems:'center', gap: 6}}>
+                    <img
+                        src={getTeamLogo(game.home_team_abbreviation)}
+                        alt=""
+                        width={20}
+                        height={20}
+                        onError={(e) => {e.target.style.display = 'none';}}
+                    />
+                    {game.home_team_name || 'Home'}
+                </span>
                 <strong>{game.home_score ?? 0} - {game.away_score || 0}</strong>
-                <span>{game.away_team_name || 'Away'}</span>
-            </div>
-            <div style = {{ display: 'flex', justifyContent: 'space-between', color: '#666'}}>
-                <span>{game.status}</span>
-                <span>{game.clock || '--'}</span>
+                <span style={{display:'flex', alignItems:'center', gap: 6}}>
+                    {game.away_team_name || 'Away'}
+                    <img 
+                        src={getTeamLogo(game.away_team_abbreviation)}
+                        alt=""
+                        width={20}
+                        height={20}
+                        onError={(e) => {e.target,style.display = 'none';}}
+                    />
+                </span>
             </div>
         </Link>
     );

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import {Link, useParams} from 'react-router-dom';
 import { fetchGameDetails } from '../services/api';
 import { useGameSocket } from '../hooks/useGameSocket';
+import { getTeamLogo } from '../constants/teams.js';
 
 const STAT_COLUMNS = [
     {key: 'minutes_played', label: 'MIN'},
@@ -171,6 +172,13 @@ export default function BoxScore() {
 
             <div style = {styles.header}>
                 <div style = {styles.teamBlock}>
+                    <img
+                        src={getTeamLogo(game.home_team_abbreviation)}
+                        alt=""
+                        height={20}
+                        width={20}
+                        onError = {(e) => {e.target.style.display = 'none';}}
+                    />
                     <span style={styles.teamName}>{game.home_team_name || 'Home'}</span>
                     <strong style = {styles.score}>{game.home_score ?? 0}</strong>
                 </div>
@@ -180,6 +188,13 @@ export default function BoxScore() {
                     {game.period ? <span>0{game.period}</span> : null}
                 </div>
                 <div style={styles.teamBlock}>
+                    <img 
+                        src={getTeamLogo(game.away_team_abbreviation)}
+                        alt=""
+                        height={20}
+                        width={20}
+                        onError = {(e) => {e.target.style.display = 'none';}}
+                    />
                     <strong style={styles.score}>{game.away_score ?? 0} </strong>
                     <span style={styles.teamName}>{game.away_team_name || 'Away'}</span>
                 </div>
@@ -214,12 +229,17 @@ const styles = {
         margin: '0 auto',
         padding: 20,
         textAlign: 'left',
+        minHeight: '100vh',
+        backgroundColor: '#fff5eb',
     },
     backLink: {
         display: 'inline-block',
         marginBottom: 16,
         color: 'inherit',
         textDecoration: 'none',
+        border: '2px solid #000000',
+        borderRadius: 8,
+        padding: '6px 12px',
     },
     header: {
         display: 'grid',

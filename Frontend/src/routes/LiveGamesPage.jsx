@@ -36,7 +36,7 @@ export default function LiveGamesPage() {
     
 
     return (
-        <div style = {{ maxWidth:900,margin:'0 auto', padding: 20}}>
+        <div style = {{ maxWidth:900, margin: '0 auto', textAlign: 'center', padding: 20, minHeight: '100vh', backgroundColor: '#fff5eb'}}>
             <h2>Live Games</h2>
             {games.length === 0 ? <p>No live games right now</p>: games.map(game => (
                 <LiveGameCard key={game.id} game={game}/>
