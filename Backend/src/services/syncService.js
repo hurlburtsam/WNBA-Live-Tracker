@@ -17,7 +17,7 @@ export function normalizeGameStatus(espnStatusName) {
   const normalized = espnStatusName.toLowerCase();
 
   if (normalized.includes("final")) return "final";
-  if (normalized.includes("in_progress") || normalized.includes("live")) return "live";
+  if (normalized.includes("in_progress") || normalized.includes("live")) return "live" || normalized.includes("halftime");
 
   return "scheduled";
 }
@@ -148,6 +148,11 @@ export async function syncPlayerGameStats(gameId, rawBoxScore) {
 
       for (const playerData of teamStats.statistics) {
         const athlete = playerData.athlete;
+
+        if(!athlete || !athlete.id) {
+          console.warn('Skipping stat row with missing athlete data')
+          continue;
+        } 
         const stats = playerData.stats || [];
 
         const fgParts = String(stats[2] || "0-0").split("-");

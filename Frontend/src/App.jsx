@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LiveGamesPage from '/.routes/LiveGamesPage';
+import LiveGamesPage from './routes/LiveGamesPage';
 import BoxScore from './views/BoxScore';
 
 export default function App() {
@@ -10,5 +10,5 @@ export default function App() {
         <Route path = "/games/:gameId" element = {<BoxScore />} />
       </Routes>
     </BrowserRouter>
-  );
+  ); 
 }

@@ -4,14 +4,16 @@ import { fetchLiveGames } from '../services/api';
 import LiveGameCard from '../components/LiveGameCard';
 
 export default function LiveGamesPage() {
+
     const [games, setGames] = useState([]);
     const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         async function loadGames() {
             const result = await fetchLiveGames();
             if(result.success) {
-                setGames(result.data || []);
+                setGames(result.data.games || result.data || []);
             }
             setLoading(false);
         }
@@ -20,7 +22,7 @@ export default function LiveGamesPage() {
 
         socket.on('games:live', (payload) => {
             if(payload?.data) {
-                setGames(payload.data);
+                setGames(payload.data.games || payload.data || []);
             }
         });
 
@@ -30,6 +32,8 @@ export default function LiveGamesPage() {
     }, []);
 
     if(loading) return <div>Loading live games...</div>;
+
+    
 
     return (
         <div style = {{ maxWidth:900,margin:'0 auto', padding: 20}}>

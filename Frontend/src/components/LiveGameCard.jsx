@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function LiveGameCard({ game }) {
     return (
         < Link 
-            to = {`/games/${game_id}`}
+            to = {`/games/${game.id}`}
             style = {{
                 display: 'block',
                 border: '1 px solid #ddd',

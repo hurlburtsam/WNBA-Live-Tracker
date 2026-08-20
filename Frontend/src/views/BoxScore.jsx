@@ -11,7 +11,7 @@ const STAT_COLUMNS = [
     {key: 'steals', label: 'STL'},
     {key:'blocks', label: 'BLK'},
     {key: 'turnovers', label: 'TOV'},
-    {key:'field_goals_made', label: 'FGM', paired: 'field_goals_attempted', format: 'madeAtempted'},
+    {key:'field_goals_made', label: 'FGM', paired: 'field_goals_attempted', format: 'madeAttempted'},
     {key: 'three_pointers_made', label: '3PM', paired: 'three_pointers_attempted', format: 'madeAttempted'},
     {key: 'free_throws_made', label: 'FTM', paired: 'free_throws_attempted', format: 'madeAttempted'},
 ];
@@ -35,8 +35,8 @@ function formatStatValue(player, column) {
 function StatLeaders({ teamName, leaders }) {
     if(!leaders.length) {
         return (
-            <div stle = {styles.leadersCard}>
-                <h4 style = {styles.leaders.Team}>{teamName}</h4>
+            <div style = {styles.leadersCard}>
+                <h4 style = {styles.leadersTeam}>{teamName}</h4>
                 <p style = {styles.muted} > No leader data yet </p>
             </div>
         );
@@ -63,14 +63,14 @@ function TeamBoxScoreTable({ teamName, players }) {
             <h3 style = {styles.tableTitle}>{teamName}</h3>
             <div style = {styles.tableWrap}>
                 <table style = {styles.table}>
-                    <thread>
+                    <thead>
                         <tr>
                             <th style = {styles.playerCol}>Player</th>
                             {STAT_COLUMNS.map((column) => (
-                                <th key={column.label} style={styles.statCol}>(column.label</th>
+                                <th key={column.label} style={styles.statCol}>{column.label}</th>
                             ))}
                         </tr>
-                    </thread>
+                    </thead>
                     <tbody>
                         {players.length === 0 ? (
                             <tr>
@@ -82,11 +82,11 @@ function TeamBoxScoreTable({ teamName, players }) {
                             players.map((player) => (
                                 <tr key={player.player_id} style={player.starter ? styles.starterRow: undefined}>
                                     <td style = {styles.playerCell}>
-                                        {player.starter ? '*' : ''}{player.player_name || `Player ${player_id}`}
+                                        {player.starter ? '*' : ''}{player.player_name || `Player ${player.player_id}`}
                                     </td>
                                     {STAT_COLUMNS.map((column) => (
                                         <td key={column.label} style = {styles.statCol}>
-                                            {formatStatValue(player_column)}
+                                            {formatStatValue(player, column)}
                                         </td>
                                     ))}
                                 </tr>
@@ -100,14 +100,14 @@ function TeamBoxScoreTable({ teamName, players }) {
 }
 
 export default function BoxScore() {
-    const { game_id} = useParams();
+    const { gameId} = useParams();
     const [game, setGame ] = useState(null);
     const [loading, setLoading ] = useState(true);
     const [error, setError] = useState(null);
-    const liveUpdate = useGameSocket(game_id);
+    const liveUpdate = useGameSocket(gameId);
 
     const loadGameDetails = useCallback(async () => {
-        const result = await fetchGameDetails(game_id);
+        const result = await fetchGameDetails(gameId);
 
         if(result.success) {
             setGame(result.data);
@@ -117,7 +117,7 @@ export default function BoxScore() {
         }
 
         setLoading(false);
-    }, [game_id]);
+    }, [gameId]);
 
     useEffect(() => {
         setLoading(true);
@@ -132,7 +132,7 @@ export default function BoxScore() {
 
             return {
                 ...prev,
-                status: liveStatus.status ?? prev.status,
+                status: liveUpdate.status ?? prev.status,
                 home_score: liveUpdate.homeScore ?? liveUpdate.home_score ?? prev.home_score,
                 away_score: liveUpdate.awayScore ?? liveUpdate.away_score ?? prev.away_score,
                 period: liveUpdate.period ?? prev.period,
@@ -148,7 +148,7 @@ export default function BoxScore() {
 
         return {
             homePlayers: boxScore.filter((row) => row.team_id === game?.home_team_id),
-            awayplayers: boxScore.filter((row) => row.team_id === game?.away_team_id),
+            awayPlayers: boxScore.filter((row) => row.team_id === game?.away_team_id),
         };
     }, [game]);
 
@@ -201,7 +201,7 @@ export default function BoxScore() {
 
             <section style = {styles.section}>
                 <h2>Box Score</h2>
-                <TeamBoxScoreTable teamName={game.home_team_name || 'Home'} players={homePLayers}/>
+                <TeamBoxScoreTable teamName={game.home_team_name || 'Home'} players={homePlayers}/>
                 <TeamBoxScoreTable teamName = {game.away_team_name || 'Away'} players={awayPlayers}/>
             </section>
         </div>
@@ -252,7 +252,7 @@ const styles = {
         textTransform: 'capitalize'
     },
     status: {
-        frontWeight: 600,
+        fontWeight: 600,
     },
     clock: {
         fontFamily: 'monospace',
@@ -287,7 +287,7 @@ const styles = {
         color: '#666',
         fontSize: 14,
     },
-    leadervalue: {
+    leaderValue: {
         fontWeight: 700,
         fontFamily: 'monospace',
     },
@@ -303,7 +303,7 @@ const styles = {
     },
     tableWrap: {
         overflowX: 'auto',
-        border: '1 px solid #ddd',
+        border: '1px solid #ddd',
         borderRadius: 12,
     },
     table: {
@@ -320,7 +320,7 @@ const styles = {
     statCol: {
         textAlign: 'center',
         padding: '10px 8px',
-        borderBottom: '1px solif #eee',
+        borderBottom: '1px solid #eee',
         whiteSpace: 'nowrap',
     },
     playerCell: {

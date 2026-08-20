@@ -20,7 +20,7 @@ export async function upsertTeam({external_id, name, abbreviation, city}){
     return result.rows[0];
 }
 
-export async function getTeambyExternalId(external_id){
+export async function getTeamByExternalId(external_id){
     const result = await pool.query(
         `
         SELECT *
