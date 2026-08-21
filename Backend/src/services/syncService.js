@@ -141,58 +141,62 @@ export async function syncPlayerGameStats(gameId, rawBoxScore) {
       const teamExternalId = String(teamStats.team.id);
       const team = await teamRepository.getTeamByExternalId(teamExternalId);
 
+      console.log('Team external id:', teamExternalId, '-> found:', !!team);
+
       if (!team) {
         console.warn(`Team ${teamExternalId} not found, skipping player stats`);
         continue;
       }
 
-      for (const playerData of teamStats.statistics) {
-        const athlete = playerData.athlete;
+      for (const statBlock of teamStats.statistics) {
+        for (const playerData of statBlock.athletes) {
+          const athlete = playerData.athlete;
 
-        if(!athlete || !athlete.id) {
-          console.warn('Skipping stat row with missing athlete data')
-          continue;
-        } 
-        const stats = playerData.stats || [];
+          if (!athlete || !athlete.id) {
+            console.warn('Skipping stat row with missing athlete data');
+            continue;
+          }
+          const stats = playerData.stats || [];
 
-        const fgParts = String(stats[2] || "0-0").split("-");
-        const fg3Parts = String(stats[3] || "0-0").split("-");
-        const ftParts = String(stats[4] || "0-0").split("-");
+          const fgParts = String(stats[2] || "0-0").split("-");
+          const fg3Parts = String(stats[3] || "0-0").split("-");
+          const ftParts = String(stats[4] || "0-0").split("-");
 
-        const playerExternalId = String(athlete.id);
-        const player = await playerRepository.upsertPlayer({
-          external_id: playerExternalId,
-          full_name: athlete.displayName || athlete.fullName || "Unknown Player",
-          team_id: team.id,
-          position: athlete.position?.abbreviation || athlete.position?.name || null,
-          jersey_number: athlete.jersey ? Number(athlete.jersey) : null,
-        });
+          const playerExternalId = String(athlete.id);
+          const player = await playerRepository.upsertPlayer({
+            external_id: playerExternalId,
+            full_name: athlete.displayName || athlete.fullName || "Unknown Player",
+            team_id: team.id,
+            position: athlete.position?.abbreviation || athlete.position?.name || null,
+            jersey_number: athlete.jersey ? Number(athlete.jersey) : null,
+          });
 
-        const record = await playerGameStatsRepository.upsertPlayerGameStats({
-          game_id: gameId,
-          player_id: player.id,
-          team_id: team.id,
-          starter: Boolean(playerData.starter),
-          minutes_played: Number(stats[0]) || 0,
-          points: Number(stats[1]) || 0,
-          field_goals_made: Number(fgParts[0]) || 0,
-          field_goals_attempted: Number(fgParts[1]) || 0,
-          three_pointers_made: Number(fg3Parts[0]) || 0,
-          three_pointers_attempted: Number(fg3Parts[1]) || 0,
-          free_throws_made: Number(ftParts[0]) || 0,
-          free_throws_attempted: Number(ftParts[1]) || 0,
-          rebounds_total: Number(stats[5]) || 0,
-          rebounds_offensive: Number(stats[10]) || 0,
-          rebounds_defensive: Number(stats[11]) || 0,
-          assists: Number(stats[6]) || 0,
-          turnovers: Number(stats[7]) || 0,
-          steals: Number(stats[8]) || 0,
-          blocks: Number(stats[9]) || 0,
-          personal_fouls: Number(stats[12]) || 0,
-          plus_minus: Number(stats[13]) || 0,
-        });
+          const record = await playerGameStatsRepository.upsertPlayerGameStats({
+            game_id: gameId,
+            player_id: player.id,
+            team_id: team.id,
+            starter: Boolean(playerData.starter),
+            minutes_played: Number(stats[0]) || 0,
+            points: Number(stats[1]) || 0,
+            field_goals_made: Number(fgParts[0]) || 0,
+            field_goals_attempted: Number(fgParts[1]) || 0,
+            three_pointers_made: Number(fg3Parts[0]) || 0,
+            three_pointers_attempted: Number(fg3Parts[1]) || 0,
+            free_throws_made: Number(ftParts[0]) || 0,
+            free_throws_attempted: Number(ftParts[1]) || 0,
+            rebounds_total: Number(stats[5]) || 0,
+            rebounds_offensive: Number(stats[10]) || 0,
+            rebounds_defensive: Number(stats[11]) || 0,
+            assists: Number(stats[6]) || 0,
+            turnovers: Number(stats[7]) || 0,
+            steals: Number(stats[8]) || 0,
+            blocks: Number(stats[9]) || 0,
+            personal_fouls: Number(stats[12]) || 0,
+            plus_minus: Number(stats[13]) || 0,
+          });
 
-        syncedStats.push(record);
+          syncedStats.push(record);
+        }
       }
     }
 
